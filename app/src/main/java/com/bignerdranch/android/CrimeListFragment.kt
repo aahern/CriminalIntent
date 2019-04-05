@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.list_item_crime.view.*
+import android.widget.TextView
 
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
@@ -18,7 +18,10 @@ class CrimeListFragment : Fragment() {
         parent: ViewGroup
     ) : RecyclerView.ViewHolder(
         inflater.inflate(R.layout.list_item_crime, parent, false)
-    )
+    ){
+        val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
+        val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
+    }
 
     private class CrimeAdapter(val crimes: List<Crime>): RecyclerView.Adapter<CrimeHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
@@ -31,8 +34,8 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            holder.itemView.crime_title.text = crimes[position].title
-            holder.itemView.crime_date.text = crimes[position].date.toString()
+            holder.titleTextView.text = crimes[position].title
+            holder.dateTextView.text = crimes[position].date.toString()
         }
 
     }
