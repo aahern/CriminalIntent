@@ -17,4 +17,11 @@
         android:layout_height="wrap_content"
         android:text="Crime Date"/>
 
+    <Button
+        android:id="@+id/police"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/serious_crime"
+        android:visibility="gone"/>
+
 </LinearLayout>

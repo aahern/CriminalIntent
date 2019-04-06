@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 
@@ -16,27 +17,49 @@ class CrimeListFragment : Fragment() {
 
     private class CrimeHolder(
         inflater: LayoutInflater,
-        parent: ViewGroup
-    ) : RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_crime, parent, false)
+        parent: ViewGroup,
+        val isSerious: Boolean
+    ) : RecyclerView.ViewHolder(
+        inflater.inflate(R.layout.list_item_crime, parent, false)
     ), View.OnClickListener {
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            Toast.makeText(v?.context,
-                crime.title + " clicked!",
-                Toast.LENGTH_SHORT).show()
-        }
-
         lateinit var crime: Crime
         val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
         val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
+        val policeButton: Button = itemView.findViewById(R.id.police)
+
+
+        init {
+            if (!isSerious) {
+                itemView.setOnClickListener(this)
+            }
+            policeButton.setOnClickListener {
+                Toast.makeText(
+                    it.context,
+                    "POLICE",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        override fun onClick(v: View?) {
+            Toast.makeText(
+                v?.context,
+                crime.title + " clicked!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
 
         fun bind(crime: Crime) {
             this.crime = crime
-            titleTextView.text = crime.title
-            dateTextView.text = crime.date.toString()
+            if (isSerious) {
+                titleTextView.visibility = View.GONE
+                dateTextView.visibility = View.GONE
+                policeButton.visibility = View.VISIBLE
+            } else {
+                titleTextView.text = crime.title
+                dateTextView.text = crime.date.toString()
+            }
         }
 
 
@@ -45,7 +68,10 @@ class CrimeListFragment : Fragment() {
     private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            return CrimeHolder(layoutInflater, parent)
+            if (viewType == 1) {
+                return CrimeHolder(layoutInflater, parent, true)
+            }
+            return CrimeHolder(layoutInflater, parent, false)
         }
 
         override fun getItemCount(): Int {
@@ -57,6 +83,13 @@ class CrimeListFragment : Fragment() {
             holder.bind(crime)
         }
 
+        override fun getItemViewType(position: Int): Int {
+            return if (crimes[position].requiresPolice) {
+                1
+            } else {
+                0
+            }
+        }
     }
 
 

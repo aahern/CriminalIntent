@@ -10,6 +10,7 @@ object CrimeLab {
             crime.title = "Crime #$i"
             crime.solved = i%2==0
             crimes.add(crime)
+            crime.requiresPolice = i % 5 == 0
         }
     }
 
