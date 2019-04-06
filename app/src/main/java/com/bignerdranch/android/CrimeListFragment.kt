@@ -1,6 +1,5 @@
 package com.bignerdranch.android
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,11 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
-    private lateinit var crimeAdapter: CrimeAdapter
+    private var crimeAdapter: CrimeAdapter? = null
 
     private class CrimeHolder(
         inflater: LayoutInflater,
@@ -85,7 +83,16 @@ class CrimeListFragment : Fragment() {
     private fun updateUI() {
         val crimes = CrimeLab.crimes
 
-        crimeAdapter = CrimeAdapter(crimes)
-        crimeRecyclerView.adapter = crimeAdapter
+        if (crimeAdapter == null) {
+            crimeAdapter = CrimeAdapter(crimes)
+            crimeRecyclerView.adapter = crimeAdapter
+        } else {
+            crimeAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUI()
     }
 }
