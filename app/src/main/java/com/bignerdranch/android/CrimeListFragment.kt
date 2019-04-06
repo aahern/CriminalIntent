@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
@@ -16,14 +17,32 @@ class CrimeListFragment : Fragment() {
     private class CrimeHolder(
         inflater: LayoutInflater,
         parent: ViewGroup
-    ) : RecyclerView.ViewHolder(
-        inflater.inflate(R.layout.list_item_crime, parent, false)
-    ){
+    ) : RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_crime, parent, false)
+    ), View.OnClickListener {
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            Toast.makeText(v?.context,
+                crime.title + " clicked!",
+                Toast.LENGTH_SHORT).show()
+        }
+
+        lateinit var crime: Crime
         val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
         val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
+
+        fun bind(crime: Crime) {
+            this.crime = crime
+            titleTextView.text = crime.title
+            dateTextView.text = crime.date.toString()
+        }
+
+
     }
 
-    private class CrimeAdapter(val crimes: List<Crime>): RecyclerView.Adapter<CrimeHolder>(){
+    private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             return CrimeHolder(layoutInflater, parent)
@@ -34,8 +53,8 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            holder.titleTextView.text = crimes[position].title
-            holder.dateTextView.text = crimes[position].date.toString()
+            val crime = crimes[position]
+            holder.bind(crime)
         }
 
     }
