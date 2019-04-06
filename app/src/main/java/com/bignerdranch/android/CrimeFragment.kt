@@ -18,11 +18,26 @@ class CrimeFragment : Fragment() {
     lateinit var dateButton: Button
     lateinit var solvedCheckBox: CheckBox
 
+    companion object {
+        const val ARG_CRIME_ID: String = "crime_id"
+
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            val args = Bundle()
+            args.putSerializable(ARG_CRIME_ID, crimeId)
+
+            val fragment = CrimeFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val crimeId: UUID = activity?.intent?.getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID) as UUID
+        val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crime = CrimeLab.getCrime(crimeId)
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -7,7 +7,7 @@ import java.util.*
 
 class CrimeActivity : SingleFragmentActivity() {
     companion object {
-        const val EXTRA_CRIME_ID: String = "com.bignerdranch.android.criminalintent.crime_id"
+        private const val EXTRA_CRIME_ID: String = "com.bignerdranch.android.criminalintent.crime_id"
         fun newIntent(packageContext: Context, crimeId: UUID): Intent{
             val intent = Intent(packageContext, CrimeActivity::class.java)
             intent.putExtra(EXTRA_CRIME_ID, crimeId)
@@ -16,6 +16,8 @@ class CrimeActivity : SingleFragmentActivity() {
     }
 
     override fun createFragment(): Fragment {
-        return CrimeFragment()
+        val crimeID: UUID = intent.getSerializableExtra(EXTRA_CRIME_ID) as UUID
+        return CrimeFragment.newInstance(crimeID)
+
     }
 }
