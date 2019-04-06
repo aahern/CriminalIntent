@@ -15,10 +15,8 @@ object CrimeLab {
 
     fun getCrime(id: UUID): Crime? {
         crimes.forEach {
-            return if (it.uuid == id) {
-                it
-            } else {
-                null
+            if (it.uuid == id){
+                return it
             }
         }
         return null

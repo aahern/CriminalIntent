@@ -7,17 +7,21 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import java.util.*
 
 class CrimeFragment : Fragment() {
-    lateinit var crime: Crime
+    var crime: Crime? = null
     lateinit var titleField: EditText
     lateinit var dateButton: Button
     lateinit var solvedCheckBox: CheckBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        crime = Crime()
+        val crimeId: UUID = activity?.intent?.getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID) as UUID
+        crime = CrimeLab.getCrime(crimeId)
     }
 
     override fun onCreateView(
@@ -27,14 +31,16 @@ class CrimeFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_crime, container, false)
         solvedCheckBox = v.findViewById(R.id.crime_solved) as CheckBox
+        solvedCheckBox.isChecked = crime?.solved ?: false
 
-        solvedCheckBox.setOnCheckedChangeListener { _, isChecked -> crime.solved = isChecked }
+        solvedCheckBox.setOnCheckedChangeListener { _, isChecked -> crime?.solved = isChecked }
 
         dateButton = v.findViewById(R.id.crime_date) as Button
-        dateButton.text = crime.date.toString()
+        dateButton.text = crime?.date.toString()
         dateButton.isEnabled = false
 
         titleField = v.findViewById(R.id.crime_title) as EditText
+        titleField.setText(crime?.title)
 
         titleField.addTextChangedListener(object: TextWatcher{
             override fun afterTextChanged(s: Editable?) {
@@ -44,7 +50,7 @@ class CrimeFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                crime.title = s.toString()
+                crime?.title = s.toString()
             }
 
         })
