@@ -21,12 +21,14 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
         <Button
+            android:id="@+id/first_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:text="FIRST"/>
 
         <Button
+            android:id="@+id/last_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
            android:layout_weight="1.0"
