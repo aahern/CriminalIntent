@@ -1,5 +1,6 @@
 package com.bignerdranch.android
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -14,9 +15,13 @@ class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
     private var crimeAdapter: CrimeAdapter? = null
 
-    private class CrimeHolder(
+    companion object {
+        const val REQUEST_CRIME: Int = 1
+    }
+
+    inner class CrimeHolder(
         inflater: LayoutInflater,
-        parent: ViewGroup
+        private val parent: ViewGroup
     ) : RecyclerView.ViewHolder(
         inflater.inflate(R.layout.list_item_crime, parent, false)
     ), View.OnClickListener {
@@ -25,10 +30,8 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View?) {
-            v?.let {
-                val intent = CrimeActivity.newIntent(it.context, crime.uuid)
-                it.context.startActivity(intent)
-            }
+            val intent = CrimeActivity.newIntent(parent.context, crime.uuid, adapterPosition)
+            startActivityForResult(intent, REQUEST_CRIME)
         }
 
         lateinit var crime: Crime
@@ -42,11 +45,10 @@ class CrimeListFragment : Fragment() {
             dateTextView.text = crime.date.toString()
             solvedImageView.visibility = if (crime.solved) View.VISIBLE else View.GONE
         }
-
-
     }
 
-    private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+
+    private inner class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             return CrimeHolder(layoutInflater, parent)
@@ -63,6 +65,13 @@ class CrimeListFragment : Fragment() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CRIME && data != null) {
+            val pos = data.getIntExtra(CrimeFragment.RESULT_CRIME_POSITION, 0)
+            updateUI(pos)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,6 +89,10 @@ class CrimeListFragment : Fragment() {
         return v
     }
 
+    private fun updateUI(position: Int) {
+        crimeAdapter?.notifyItemChanged(position)
+    }
+
     private fun updateUI() {
         val crimes = CrimeLab.crimes
 
@@ -90,9 +103,5 @@ class CrimeListFragment : Fragment() {
             crimeAdapter?.notifyDataSetChanged()
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        updateUI()
-    }
 }
+
