@@ -1,5 +1,7 @@
 package com.bignerdranch.android
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
@@ -22,6 +24,8 @@ class CrimeFragment : Fragment() {
         const val ARG_CRIME_ID: String = "crime_id"
         const val DIALOG_DATE: String = "DialogDate"
 
+        const val REQUEST_DATE: Int = 0
+
         fun newInstance(crimeId: UUID): CrimeFragment {
             val args = Bundle()
             args.putSerializable(ARG_CRIME_ID, crimeId)
@@ -39,7 +43,6 @@ class CrimeFragment : Fragment() {
     }
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,17 +55,21 @@ class CrimeFragment : Fragment() {
         solvedCheckBox.setOnCheckedChangeListener { _, isChecked -> crime?.solved = isChecked }
 
         dateButton = v.findViewById(R.id.crime_date) as Button
-        dateButton.text = crime?.date.toString()
+        updateDate()
         dateButton.setOnClickListener {
             val manager = fragmentManager
-            val dialog = DatePickerFragment()
+
+            val dialog = DatePickerFragment.newInstance(crime?.date)
+
+            dialog.setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+
             dialog.show(manager, DIALOG_DATE)
         }
 
         titleField = v.findViewById(R.id.crime_title) as EditText
         titleField.setText(crime?.title)
 
-        titleField.addTextChangedListener(object: TextWatcher{
+        titleField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -75,6 +82,22 @@ class CrimeFragment : Fragment() {
 
         })
         return v
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK){
+            return
+        }
+
+        if (requestCode == REQUEST_DATE){
+            val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
+            crime?.date = date
+            updateDate()
+        }
+    }
+
+    private fun updateDate() {
+        dateButton.text = crime?.date.toString()
     }
 }
 
