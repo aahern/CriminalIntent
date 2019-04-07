@@ -20,6 +20,7 @@ class CrimeFragment : Fragment() {
 
     companion object {
         const val ARG_CRIME_ID: String = "crime_id"
+        const val DIALOG_DATE: String = "DialogDate"
 
         fun newInstance(crimeId: UUID): CrimeFragment {
             val args = Bundle()
@@ -52,7 +53,11 @@ class CrimeFragment : Fragment() {
 
         dateButton = v.findViewById(R.id.crime_date) as Button
         dateButton.text = crime?.date.toString()
-        dateButton.isEnabled = false
+        dateButton.setOnClickListener {
+            val manager = fragmentManager
+            val dialog = DatePickerFragment()
+            dialog.show(manager, DIALOG_DATE)
+        }
 
         titleField = v.findViewById(R.id.crime_title) as EditText
         titleField.setText(crime?.title)
