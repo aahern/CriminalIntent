@@ -12,19 +12,23 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TimePicker
 import java.util.*
 
 class CrimeFragment : Fragment() {
     var crime: Crime? = null
     lateinit var titleField: EditText
     lateinit var dateButton: Button
+    lateinit var timeButton: Button
     lateinit var solvedCheckBox: CheckBox
 
     companion object {
         const val ARG_CRIME_ID: String = "crime_id"
         const val DIALOG_DATE: String = "DialogDate"
+        const val DIALOG_TIME: String = "DialogTime"
 
         const val REQUEST_DATE: Int = 0
+        const val REQUEST_TIME: Int = 1
 
         fun newInstance(crimeId: UUID): CrimeFragment {
             val args = Bundle()
@@ -66,6 +70,22 @@ class CrimeFragment : Fragment() {
             dialog.show(manager, DIALOG_DATE)
         }
 
+        timeButton = v.findViewById(R.id.crime_time) as Button
+        timeButton.setOnClickListener {
+            val manager = fragmentManager
+
+            val cal = Calendar.getInstance()
+            cal.time = crime?.date
+            val hours = cal.get(Calendar.HOUR_OF_DAY)
+            val minutes = cal.get(Calendar.MINUTE)
+
+            val dialog = TimePickerFragment.newInstance(hours, minutes)
+
+            dialog.setTargetFragment(this@CrimeFragment, REQUEST_TIME)
+
+            dialog.show(manager, DIALOG_TIME)
+        }
+
         titleField = v.findViewById(R.id.crime_title) as EditText
         titleField.setText(crime?.title)
 
@@ -92,6 +112,16 @@ class CrimeFragment : Fragment() {
         if (requestCode == REQUEST_DATE){
             val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             crime?.date = date
+            updateDate()
+        } else if (requestCode == REQUEST_TIME){
+            val hours = data?.getSerializableExtra(TimePickerFragment.EXTRA_HOUR) as Int
+            val minutes = data.getSerializableExtra(TimePickerFragment.EXTRA_MINUTE) as Int
+
+            val cal = Calendar.getInstance()
+            cal.time = crime?.date
+            cal.set(Calendar.HOUR_OF_DAY, hours)
+            cal.set(Calendar.MINUTE, minutes)
+            crime?.date = cal.time
             updateDate()
         }
     }
