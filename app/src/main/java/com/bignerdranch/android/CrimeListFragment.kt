@@ -88,6 +88,21 @@ class CrimeListFragment : Fragment() {
         inflater?.inflate(R.menu.fragment_crime_list, menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.new_crime -> {
+                val crime = Crime()
+                CrimeLab.crimes.add(crime)
+                context?.let {
+                    val intent = CrimePagerActivity.newIntent(context!!, crime.uuid)
+                    startActivity(intent)
+                }
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun updateUI() {
         val crimes = CrimeLab.crimes
 
