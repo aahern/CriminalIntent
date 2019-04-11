@@ -99,7 +99,7 @@ class CrimeListFragment : Fragment() {
         inflater?.inflate(R.menu.fragment_crime_list, menu)
 
         val subtitleItem = menu?.findItem(R.id.show_subtitle)
-        if (subtitleVisible == true) {
+        if (subtitleVisible) {
             subtitleItem?.setTitle(R.string.hide_subtitle)
         } else {
             subtitleItem?.setTitle(R.string.show_subtitle)
