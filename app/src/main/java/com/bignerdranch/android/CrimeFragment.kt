@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -40,8 +38,25 @@ class CrimeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crime = CrimeLab.getCrime(crimeId)
+        setHasOptionsMenu(true)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(R.menu.fragment_crime, menu)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.delete_crime -> {
+                CrimeLab.crimes.remove(crime)
+                activity?.finish()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,11 +100,11 @@ class CrimeFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return
         }
 
-        if (requestCode == REQUEST_DATE){
+        if (requestCode == REQUEST_DATE) {
             val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             crime?.date = date
             updateDate()
