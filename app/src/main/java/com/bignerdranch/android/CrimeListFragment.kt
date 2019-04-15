@@ -111,7 +111,7 @@ class CrimeListFragment : Fragment() {
         return when (item?.itemId) {
             R.id.new_crime -> {
                 val crime = Crime()
-                CrimeLab.crimes.add(crime)
+                CrimeLab.getInstance(this.context!!.applicationContext).addCrime(crime)
                 context?.let {
                     val intent = CrimePagerActivity.newIntent(context!!, crime.uuid)
                     startActivity(intent)
@@ -119,7 +119,7 @@ class CrimeListFragment : Fragment() {
                 return true
             }
             R.id.show_subtitle -> {
-                subtitleVisible = subtitleVisible?.not()
+                subtitleVisible = subtitleVisible.not()
                 activity?.invalidateOptionsMenu()
                 updateSubtitle()
                 return true
@@ -129,7 +129,7 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateUI() {
-        val crimes = CrimeLab.crimes
+        val crimes = CrimeLab.getInstance(this.context!!.applicationContext).getCrimes()
 
         if (crimeAdapter == null) {
             crimeAdapter = CrimeAdapter(crimes)
@@ -147,7 +147,7 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateSubtitle() {
-        val crimeCount = CrimeLab.crimes.size
+        val crimeCount = CrimeLab.getInstance(this.context!!.applicationContext).getCrimes().size
         var subtitle: String? = getString(R.string.subtitle_format, crimeCount)
 
         if (!subtitleVisible) {

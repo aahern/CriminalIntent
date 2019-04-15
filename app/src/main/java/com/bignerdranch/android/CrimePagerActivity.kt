@@ -9,14 +9,14 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import java.util.*
 
-class CrimePagerActivity: AppCompatActivity() {
+class CrimePagerActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
     lateinit var crimes: List<Crime>
 
     companion object {
         const val EXTRA_CRIME_ID: String = "com.bignerdranch.android.criminalintent.crime_id"
 
-        fun newIntent(packageContext: Context, crimeId: UUID): Intent{
+        fun newIntent(packageContext: Context, crimeId: UUID): Intent {
             val intent = Intent(packageContext, CrimePagerActivity::class.java)
             intent.putExtra(EXTRA_CRIME_ID, crimeId)
             return intent
@@ -31,10 +31,10 @@ class CrimePagerActivity: AppCompatActivity() {
 
         viewPager = findViewById(R.id.crime_view_pager)
 
-        crimes = CrimeLab.crimes
+        crimes = CrimeLab.getInstance(this.applicationContext).getCrimes()
         val fragmentManager = supportFragmentManager
 
-        viewPager.adapter = object: FragmentStatePagerAdapter(fragmentManager){
+        viewPager.adapter = object : FragmentStatePagerAdapter(fragmentManager) {
             override fun getItem(position: Int): Fragment {
                 val crime = crimes[position]
                 return CrimeFragment.newInstance(crime.uuid)
@@ -45,8 +45,8 @@ class CrimePagerActivity: AppCompatActivity() {
             }
         }
 
-        for (i in 0..crimes.size){
-            if (crimes[i].uuid == crimeId){
+        for (i in 0..crimes.size) {
+            if (crimes[i].uuid == crimeId) {
                 viewPager.currentItem = i
                 break
             }

@@ -39,9 +39,14 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
-        crime = CrimeLab.getCrime(crimeId)
+        crime = CrimeLab.getInstance(this.context!!.applicationContext).getCrime(crimeId)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        CrimeLab.getInstance(context?.applicationContext!!).updateCrime(crime!!)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,11 +90,11 @@ class CrimeFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return
         }
 
-        if (requestCode == REQUEST_DATE){
+        if (requestCode == REQUEST_DATE) {
             val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             crime?.date = date
             updateDate()
