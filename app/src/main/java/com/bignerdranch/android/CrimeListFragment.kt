@@ -46,7 +46,7 @@ class CrimeListFragment : Fragment() {
 
     }
 
-    private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+    private class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             return CrimeHolder(layoutInflater, parent)
@@ -59,6 +59,10 @@ class CrimeListFragment : Fragment() {
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             val crime = crimes[position]
             holder.bind(crime)
+        }
+
+        fun setCrimeList(crimes: List<Crime>) {
+            this.crimes = crimes
         }
 
     }
@@ -135,6 +139,7 @@ class CrimeListFragment : Fragment() {
             crimeAdapter = CrimeAdapter(crimes)
             crimeRecyclerView.adapter = crimeAdapter
         } else {
+            crimeAdapter?.setCrimeList(crimes)
             crimeAdapter?.notifyDataSetChanged()
         }
 
